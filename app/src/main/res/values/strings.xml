@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Http Kicks for VLC</string>
+    <string name="tab_text_1">地デジ</string>
+    <string name="tab_text_2">BS</string>
+
+    <string name="protocol_http">http://</string>
+
+    <string name="edit_host_address">Input tuner host address as host and port.</string>
+    <string name="edit_host_address_hint">Host like x.x.x.x (mDNS .local is ok)</string>
+    <string name="edit_host_port_hint">Port like 7777</string>
+
+    <string name="edit_channel_name_and_id">Input channel name and id</string>
+    <string name="edit_ch_name_hint">Channel name (user define)</string>
+    <string name="edit_ch_id_hint">Id (Alphanumeric)</string>
+</resources>

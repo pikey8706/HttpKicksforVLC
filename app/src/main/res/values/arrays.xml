@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 地デジチャンネル -->
+    <string-array name="ts_channel_names">
+        <item>日テレ</item>
+        <item>テレビ岩手</item>
+        <item>TBS</item>
+        <item>IBC</item>
+        <item>朝日</item>
+        <item>岩手朝日</item>
+        <item>めんこいテレビ</item>
+        <item>NHK教育</item>
+        <item>NHK総合</item>
+    </string-array>
+
+    <string-array name="ts_channel_ids">
+        <item>22</item>
+        <item>17</item>
+        <item>18</item>
+        <item>15</item>
+        <item>24</item>
+        <item>19</item>
+        <item>50</item>
+        <item>14</item>
+        <item>20</item>
+    </string-array>
+
+    <!-- 衛星チャンネル -->
+    <string-array name="bs_channel_names">
+        <item>BS朝日</item>
+        <item>BS-TBS</item>
+        <item>BSジャパン</item>
+        <item>WOWOWプライム</item>
+        <item>NHK BSプレミアム</item>
+        <item>ディズニーチャンネル</item>
+        <item>WOWOWライブ</item>
+        <item>WOWOWシネマ</item>
+        <item>BS11</item>
+        <item>スターチャンネル1</item>
+        <item>TwellV</item>
+        <item>FOX bs238</item>
+        <item>BSスカパー!</item>
+        <item>放送大学</item>
+        <item>BS日テレ</item>
+        <item>BSフジ</item>
+        <item>BSアニマックス</item>
+        <item>NHK BS1</item>
+        <item>スターチャンネル2/3</item>
+        <item>グリーンチャンネル</item>
+        <item>J SPORTS 1</item>
+        <item>J SPORTS 2</item>
+        <item>IMAGICA BS</item>
+        <item>J SPORTS 3</item>
+        <item>J SPORTS 4</item>
+        <item>BS釣りビジョン</item>
+        <item>日本映画専門チャンネル</item>
+        <item>D-Life</item>
+    </string-array>
+
+    <string-array name="bs_channel_ids">
+        <item>BS01_0</item>
+        <item>BS01_1</item>
+        <item>BS01_2</item>
+        <item>BS03_0</item>
+        <item>BS03_1</item>
+        <item>BS03_2</item>
+        <item>BS05_0</item>
+        <item>BS05_1</item>
+        <item>BS09_0</item>
+        <item>BS09_1</item>
+        <item>BS09_2</item>
+        <item>BS11_0</item>
+        <item>BS11_1</item>
+        <item>BS11_2</item>
+        <item>BS13_0</item>
+        <item>BS13_1</item>
+        <item>BS13_2</item>
+        <item>BS15_0</item>
+        <item>BS15_1</item>
+        <item>BS19_0</item>
+        <item>BS19_1</item>
+        <item>BS19_2</item>
+        <item>BS21_0</item>
+        <item>BS21_1</item>
+        <item>BS21_2</item>
+        <item>BS23_0</item>
+        <item>BS23_1</item>
+        <item>BS23_2</item>
+    </string-array>
+
+</resources>
