@@ -5,8 +5,8 @@
 
     <string name="protocol_http">http://</string>
 
-    <string name="edit_host_address">Input tuner host address as host and port.</string>
-    <string name="edit_host_address_hint">Host like x.x.x.x (mDNS .local is ok)</string>
+    <string name="edit_host_address">Input tuner host address and port.</string>
+    <string name="edit_host_address_hint">Host like x.x.x.x</string>
     <string name="edit_host_port_hint">Port like 7777</string>
 
     <string name="edit_channel_name_and_id">Input channel name and id</string>

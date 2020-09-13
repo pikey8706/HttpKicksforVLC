@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -21,6 +20,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
+
+import java.util.ArrayList;
 
 import jp.pikey8706.httpkicksforvlc.R;
 import jp.pikey8706.httpkicksforvlc.kicks.Constants;
@@ -52,6 +53,7 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
     private String[] mChannelNameAndIds;
     private String[] mChannelNames;
     private String[] mChannelIds;
+    private ArrayList<String> mChannelNamesList = new ArrayList<>();
 
     public static TunerChannelsFragment newInstance(int index) {
         TunerChannelsFragment fragment = new TunerChannelsFragment();
@@ -61,8 +63,13 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
         return fragment;
     }
 
+    private int getSectionNumber() {
+        return getArguments().getInt(ARG_SECTION_NUMBER);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate: " + getSectionNumber());
         super.onCreate(savedInstanceState);
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(getContext());
         pageViewModel = ViewModelProviders.of(this).get(PageViewModel.class);
@@ -93,20 +100,27 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
         mChannelIds = new String[mKeyChannels.length];
         int count = 0;
         for (String keyChannel : mKeyChannels) {
+            if (defaultChannelNameAndIds[count].equals("")) {
+                break;
+            }
             String channelNameAndId = Utility.loadPref(keyChannel, defaultChannelNameAndIds[count],
                     mSharedPreference);
             mChannelNameAndIds[count] = channelNameAndId;
-            mChannelNames[count] = Utility.getChannelNamePart(channelNameAndId);
-            mChannelIds[count] = Utility.getChannelIdPart(channelNameAndId);
+            String channelName = Utility.getChannelNamePart(channelNameAndId);
+            String channelId = Utility.getChannelIdPart(channelNameAndId);
+            mChannelNames[count] = channelName;
+            mChannelNamesList.add(count, channelName);
+            mChannelIds[count] = channelId;
             count++;
         }
 
-        mArrayAdapter = new ArrayAdapter<>(getContext(), R.layout.list_item, mChannelNames);
+        mArrayAdapter = new ArrayAdapter<>(getContext(), R.layout.list_item, mChannelNamesList);
     }
 
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView: " + getSectionNumber());
         View root = inflater.inflate(R.layout.fragment_tuner_channels, container, false);
         final TextView textView = root.findViewById(R.id.section_label);
         pageViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
@@ -143,6 +157,7 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onViewCreated: " + getSectionNumber());
         super.onViewCreated(view, savedInstanceState);
         ViewCompat.setNestedScrollingEnabled(mListViewChannels, true);
     }
@@ -163,6 +178,24 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
         } else if (childFragment instanceof EditChannelDialogFragment) {
             ((EditChannelDialogFragment) childFragment).setListener(this);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.v(TAG, "onPause: " + getSectionNumber());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.v(TAG, "onResume: " + getSectionNumber());
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.v(TAG, "onDestroyView: " + getSectionNumber());
+        super.onDestroyView();
     }
 
     @Override
@@ -229,6 +262,7 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
 
         mChannelNameAndIds[indexEditChannel] = channelNameAndId;
         mChannelNames[indexEditChannel] = ch_name;
+        mChannelNamesList.set(indexEditChannel, ch_name);
         mChannelIds[indexEditChannel] = ch_id;
         mArrayAdapter.notifyDataSetChanged();
     }
