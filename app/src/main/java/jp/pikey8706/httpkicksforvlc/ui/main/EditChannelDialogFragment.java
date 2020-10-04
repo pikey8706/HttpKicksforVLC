@@ -40,7 +40,7 @@ public class EditChannelDialogFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
-        builder.setMessage(R.string.edit_host_address)
+        builder.setMessage(R.string.edit_channel_name_and_id)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         int indexEditChannel = getArguments().getInt(Constants.INDEX_EDIT_CHANNEL);

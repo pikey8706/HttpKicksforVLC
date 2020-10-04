@@ -8,16 +8,16 @@ import androidx.lifecycle.ViewModel;
 
 public class PageViewModel extends ViewModel {
 
-    private MutableLiveData<Integer> mIndex = new MutableLiveData<>();
-    private LiveData<String> mText = Transformations.map(mIndex, new Function<Integer, String>() {
+    private MutableLiveData<String> mChannel = new MutableLiveData<>();
+    private LiveData<String> mText = Transformations.map(mChannel, new Function<String, String>() {
         @Override
-        public String apply(Integer input) {
-            return "Hello world from section: " + input;
+        public String apply(String channel) {
+            return "CH: " + channel;
         }
     });
 
-    public void setIndex(int index) {
-        mIndex.setValue(index);
+    public void setChannel(String channel) {
+        mChannel.setValue(channel);
     }
 
     public LiveData<String> getText() {

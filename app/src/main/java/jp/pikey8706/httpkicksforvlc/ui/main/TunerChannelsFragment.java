@@ -77,7 +77,6 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
         if (getArguments() != null) {
             index = getArguments().getInt(ARG_SECTION_NUMBER);
         }
-        pageViewModel.setIndex(index);
 
         mKeySelectedHost = (index == 1) ? Constants.KEY_SELECTED_HOST_TS : Constants.KEY_SELECTED_HOST_BS;
         mHostKeys = (index == 1) ? Constants.KEY_HOSTS_TS : Constants.KEY_HOSTS_BS;
@@ -122,7 +121,7 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
             Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView: " + getSectionNumber());
         View root = inflater.inflate(R.layout.fragment_tuner_channels, container, false);
-        final TextView textView = root.findViewById(R.id.section_label);
+        final TextView textView = root.findViewById(R.id.selected_channel);
         pageViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -202,6 +201,8 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         String channelName = ((TextView) view).getText().toString();
         String channelId = mChannelIds[i];
+
+        pageViewModel.setChannel(channelName);
 
         String baseUrl = null;
         RadioButton selectedUrlButton = getSelectedRadioButton();

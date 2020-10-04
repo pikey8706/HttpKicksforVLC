@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Http Kicks for VLC</string>
+    <string name="app_name">Http Kicks for MPEG</string>
     <string name="tab_text_1">地デジ</string>
     <string name="tab_text_2">BS</string>
 
@@ -12,4 +12,6 @@
     <string name="edit_channel_name_and_id">Input channel name and id</string>
     <string name="edit_ch_name_hint">Channel name (user define)</string>
     <string name="edit_ch_id_hint">Id (Alphanumeric)</string>
+
+    <string name="selected_channel_name">CH: %$1s</string>
 </resources>

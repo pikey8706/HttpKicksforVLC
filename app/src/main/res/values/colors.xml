@@ -3,4 +3,8 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+
+    <color name="allBackground">#FFFFFFFF</color>
+    <color name="radioGroupBackground">#22BB00BB</color>
+    <color name="listViewBackground">#2200BBBB</color>
 </resources>
