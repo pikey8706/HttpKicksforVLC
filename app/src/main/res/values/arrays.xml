@@ -88,4 +88,14 @@
         <item>BS23_2</item>
     </string-array>
 
+    <string-array name="service_types">
+        <item>_workstation._tcp.local</item>
+        <item>_device-info._tcp.</item>
+        <item>_smb._tcp.</item>
+        <item>_nfs._tcp.</item>
+        <item>_ssh._tcp.</item>
+        <item>_ssh._udp.</item>
+        <item>_services._dns-sd._udp</item>
+        <item></item>
+    </string-array>
 </resources>
