@@ -9,8 +9,10 @@ import android.os.Binder
 import android.os.IBinder
 import android.text.TextUtils
 import android.util.Log
-import jp.pikey8706.httpkicksforvlc.AvahiService
 import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 class AvahiService : Service() {
     private var mServiceTypes: Array<String?>? = null
@@ -22,8 +24,8 @@ class AvahiService : Service() {
     private val mNsdDiscoveryServiceInfoList = ArrayList<NsdServiceInfo>()
     private val mNsdServiceInfoList = ArrayList<NsdServiceInfo>()
     private val mResolvedServiceInfoList = ArrayList<NsdServiceInfo>()
-    private val mLockForStartOrStopForDiscover = Object()
-    private val mLockForResolveListener = Object()
+    private val mLockForDiscoverService = ReentrantLock()
+    private val mLockConditionForDiscoverService = mLockForDiscoverService.newCondition()
     private var isDiscoveryStarted = false
 
     inner class AvahiServiceBinder : Binder() {
@@ -70,11 +72,11 @@ class AvahiService : Service() {
         val dnsServiceDiscoveryServiceTypes = getString(R.string.services_dns_sd_udo)
         val discoveryListener: DiscoveryListener = object : DiscoveryListener {
             override fun onDiscoveryStarted(serviceType: String) {
-                notifyRelease(mLockForStartOrStopForDiscover)
+                notifyRelease()
             }
 
             override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
-                notifyRelease(mLockForStartOrStopForDiscover)
+                notifyRelease()
             }
 
             override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
@@ -82,7 +84,7 @@ class AvahiService : Service() {
             }
 
             override fun onDiscoveryStopped(serviceType: String) {
-                notifyRelease(mLockForStartOrStopForDiscover)
+                notifyRelease()
             }
 
             override fun onServiceFound(serviceInfo: NsdServiceInfo) {
@@ -94,10 +96,10 @@ class AvahiService : Service() {
             }
         }
         mNsdManager!!.discoverServices(dnsServiceDiscoveryServiceTypes, NsdManager.PROTOCOL_DNS_SD, discoveryListener)
-        waitFor(mLockForStartOrStopForDiscover, 0)
-        waitFor(mLockForResolveListener, TIME_TO_DISCOVER_SERVICES)
+        waitFor()
+        waitFor(TIME_TO_DISCOVER_SERVICES)
         mNsdManager!!.stopServiceDiscovery(discoveryListener)
-        waitFor(mLockForStartOrStopForDiscover, 0)
+        waitFor()
         if (mNsdDiscoveryServiceInfoList.size > 0) {
             val serviceTypeList = ArrayList<String>()
             for (nsdServiceInfo in mNsdDiscoveryServiceInfoList) {
@@ -127,23 +129,25 @@ class AvahiService : Service() {
                 if (TextUtils.isEmpty(serviceType)) {
                     continue
                 }
+                Log.d(TAG, "discoverServices: " + serviceType)
                 mNsdManager!!.discoverServices(serviceType, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener)
 
                 // wait for discovery started.
-                waitFor(mLockForStartOrStopForDiscover, 0)
+                waitFor()
                 if (isDiscoveryStarted) {
                     // wait for service discovery (timeout).
-                    waitFor(mLockForResolveListener, TIME_TO_DISCOVER_SERVICES)
+                    waitFor(TIME_TO_DISCOVER_SERVICES)
                     mNsdManager!!.stopServiceDiscovery(mDiscoveryListener)
 
                     // wait for discovery stopped.
-                    waitFor(mLockForStartOrStopForDiscover, 0)
+                    waitFor()
+                    Log.d(TAG, "stopServiceDiscovery: " + serviceType)
                 }
             }
             initializeResolveListener()
             for (serviceInfo in mNsdServiceInfoList) {
                 mNsdManager!!.resolveService(serviceInfo, mResolveListener)
-                waitFor(mLockForResolveListener, TIME_TO_RESOLVE_SERVICES)
+                waitFor(TIME_TO_RESOLVE_SERVICES)
             }
         }).start()
     }
@@ -151,38 +155,38 @@ class AvahiService : Service() {
     fun initializeDiscoveryListener() {
         mDiscoveryListener = object : DiscoveryListener {
             override fun onDiscoveryStarted(regType: String) {
-                Log.d(TAG, "Service discovery started regType: $regType")
+                Log.d(TAG, "onDiscoveryStarted regType: $regType")
                 isDiscoveryStarted = true
-                notifyRelease(mLockForStartOrStopForDiscover)
+                notifyRelease()
             }
 
             override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
-                Log.w(TAG, "Discovery failed: Error code:" + errorCode
+                Log.w(TAG, "onStartDiscoveryFailed: Error code:" + errorCode
                         + " for serviceType: " + serviceType)
                 isDiscoveryStarted = false
-                notifyRelease(mLockForStartOrStopForDiscover)
+                notifyRelease()
             }
 
             override fun onServiceFound(service: NsdServiceInfo) {
                 //見つかるのが<hostname>.local[<macアドレス>]みたいな感じだったのでcontainsで対応
-                Log.i(TAG, "service found: " + service + " hash: " + service.hashCode())
-                Log.d(TAG, "         name: " + service.serviceName + " type: " + service.serviceType
+                Log.i(TAG, "onServiceFound: " + service + " hash: " + service.hashCode())
+                Log.d(TAG, "          name: " + service.serviceName + " type: " + service.serviceType
                         + "   host: " + service.host + " port: " + service.port)
                 mNsdServiceInfoList.add(service)
             }
 
             override fun onServiceLost(service: NsdServiceInfo) {
-                Log.w(TAG, "service lost: $service")
+                Log.w(TAG, "onServiceLost: $service")
                 mNsdServiceInfoList.remove(service)
             }
 
             override fun onDiscoveryStopped(serviceType: String) {
-                Log.d(TAG, "Discovery stopped: $serviceType")
-                notifyRelease(mLockForStartOrStopForDiscover)
+                Log.d(TAG, "onDiscoveryStopped: $serviceType")
+                notifyRelease()
             }
 
             override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
-                Log.w(TAG, "Discovery failed: Error code:$errorCode")
+                Log.w(TAG, "onStopDiscoveryFailed: Error code:$errorCode")
                 // try stop again.
                 mNsdManager!!.stopServiceDiscovery(this)
             }
@@ -196,7 +200,7 @@ class AvahiService : Service() {
                 Log.w(TAG, "Resolve failed: " + errorCode
                         + " for serviceType: " + serviceInfo.serviceType
                         + " for serviceName: " + serviceInfo.serviceName)
-                notifyRelease(mLockForResolveListener)
+                notifyRelease()
             }
 
             override fun onServiceResolved(serviceInfo: NsdServiceInfo) {
@@ -205,28 +209,34 @@ class AvahiService : Service() {
 //                Log.d(TAG, "             name: " + serviceInfo.getServiceName() + " type: " + serviceInfo.getServiceType()
 //                        + "   host: " + serviceInfo.getHost().getHostAddress() + " port: " + serviceInfo.getPort());
                 mResolvedServiceInfoList.add(serviceInfo)
-                notifyRelease(mLockForResolveListener)
+                notifyRelease()
             }
         }
     }
 
-    private fun waitFor(lockObj: Object, timeout: Long) {
-        synchronized(lockObj) {
+    private fun waitFor() {
+        mLockForDiscoverService.withLock {
             try {
-                lockObj.wait(timeout)
+                mLockConditionForDiscoverService.await()
             } catch (e: InterruptedException) {
-                Log.w(TAG, "Failed to wait lock $lockObj")
+                Log.w(TAG, "Failed to wait lock.")
             }
         }
     }
 
-    private fun notifyRelease(lockObj: Object) {
-        synchronized(lockObj) {
+    private fun waitFor(timeout: Long) {
+        mLockForDiscoverService.withLock {
             try {
-                lockObj.notify()
-            } catch (e: IllegalMonitorStateException) {
-                Log.w(TAG, "Failed to notify lock $lockObj")
+                mLockConditionForDiscoverService.await(timeout, TimeUnit.MILLISECONDS)
+            } catch (e: InterruptedException) {
+                Log.w(TAG, "Failed to wait lock.")
             }
+        }
+    }
+
+    private fun notifyRelease() {
+        mLockForDiscoverService.withLock {
+            mLockConditionForDiscoverService.signal()
         }
     }
 
