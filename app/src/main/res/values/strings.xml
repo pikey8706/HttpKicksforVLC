@@ -6,6 +6,7 @@
     <string name="protocol_http">http://</string>
 
     <string name="edit_host_address">Input tuner host address and port.</string>
+    <string name="edit_host_name_hint">Host Name (mDNS Service name)</string>
     <string name="edit_host_address_hint">Host like x.x.x.x</string>
     <string name="edit_host_port_hint">Port like 7777</string>
 

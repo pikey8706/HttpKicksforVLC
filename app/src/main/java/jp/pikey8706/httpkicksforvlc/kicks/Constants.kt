@@ -77,21 +77,47 @@ class Constants {
                     KEY_HOST_BS_3,
                     KEY_HOST_BS_4
             )
+             KEY_HOST_NAMES_TS = arrayOf(
+                     KEY_HOST_NAME_TS_1,
+                     KEY_HOST_NAME_TS_2,
+                     KEY_HOST_NAME_TS_3,
+                     KEY_HOST_NAME_TS_4
+             )
+             KEY_HOST_NAMES_BS = arrayOf(
+                     KEY_HOST_NAME_BS_1,
+                     KEY_HOST_NAME_BS_2,
+                     KEY_HOST_NAME_BS_3,
+                     KEY_HOST_NAME_BS_4
+             )
         }
 
+        lateinit var KEY_HOST_NAMES_BS: Array<String>
+        lateinit var KEY_HOST_NAMES_TS: Array<String>
         lateinit var KEY_HOSTS_BS: Array<String>
         lateinit var KEY_HOSTS_TS: Array<String>
         lateinit var KEY_CHANNELS_BS: Array<String>
         lateinit var KEY_CHANNELS_TS: Array<String>
         const val KEY_SELECTED_HOST_TS = "selected_host_ts"
-    const val KEY_SELECTED_HOST_BS = "selected_host_bs"
+        const val KEY_SELECTED_HOST_BS = "selected_host_bs"
 
     /**
      * Edit host key
      */
     const val KEY_EDIT_HOST = "key_edit_host"
+    const val KEY_EDIT_HOST_NAME = "key_edit_host_name"
     const val KEY_EDIT_HOST_VIEW_ID = "key_edit_host_view_id"
 
+        /**
+         * Host Name save keys
+         */
+        const val KEY_HOST_NAME_TS_1 = "key_host_name_ts_1"
+        const val KEY_HOST_NAME_TS_2 = "key_host_name_ts_2"
+        const val KEY_HOST_NAME_TS_3 = "key_host_name_ts_3"
+        const val KEY_HOST_NAME_TS_4 = "key_host_name_ts_4"
+        const val KEY_HOST_NAME_BS_1 = "key_host_name_bs_1"
+        const val KEY_HOST_NAME_BS_2 = "key_host_name_bs_2"
+        const val KEY_HOST_NAME_BS_3 = "key_host_name_bs_3"
+        const val KEY_HOST_NAME_BS_4 = "key_host_name_bs_4"
     /**
      * Host save keys
      */
@@ -103,7 +129,7 @@ class Constants {
     const val KEY_HOST_BS_2 = "key_host_bs_2"
     const val KEY_HOST_BS_3 = "key_host_bs_3"
     const val KEY_HOST_BS_4 = "key_host_bs_4"
-//    @JvmField 
+//    @JvmField
 //    @JvmField
 
     const val PROTOCOL_HTTP = "http://"

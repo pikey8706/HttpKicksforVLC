@@ -13,7 +13,11 @@ import jp.pikey8706.httpkicksforvlc.kicks.Utility
 
 class EditHostDialogFragment : DialogFragment() {
     interface EditHostDialogListener {
-        fun onEditHostDialogDone(viewId: Int, keyHost: String?, host: String?, port: String?)
+        fun onEditHostDialogDone(viewId: Int,
+                                 keyHostName: String?,
+                                 keyHost: String?,
+                                 hostName: String?,
+                                 host: String?, port: String?)
     }
 
     var mEditHostDialogListener: EditHostDialogListener? = null
@@ -25,11 +29,15 @@ class EditHostDialogFragment : DialogFragment() {
         // Get the layout inflater
         val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(R.layout.dialog_edit_host, null)
+        val keyEditHostName = requireArguments().getString(Constants.KEY_EDIT_HOST_NAME)
         val keyEditHost = requireArguments().getString(Constants.KEY_EDIT_HOST)
+        val hostName = Utility.loadPref(keyEditHostName, null,
+                PreferenceManager.getDefaultSharedPreferences(context))
         val hostAddressPort = Utility.loadPref(keyEditHost, getString(R.string.protocol_http),
                 PreferenceManager.getDefaultSharedPreferences(context))
         val hostPart = Utility.getHostPart(hostAddressPort)
         val portPart = Utility.getPortPart(hostAddressPort)
+        (view.findViewById<View>(R.id.host_name) as EditText).setText(hostName)
         (view.findViewById<View>(R.id.host_address) as EditText).setText(hostPart)
         (view.findViewById<View>(R.id.host_port) as EditText).setText(portPart)
         val builder = AlertDialog.Builder(activity)
@@ -39,11 +47,14 @@ class EditHostDialogFragment : DialogFragment() {
                     val viewIdEditHost = requireArguments().getInt(Constants.KEY_EDIT_HOST_VIEW_ID)
                     val keyEditHost = requireArguments().getString(Constants.KEY_EDIT_HOST)
                     val alertDialog = dialog as AlertDialog
+                    val hostName = alertDialog.findViewById<EditText>(R.id.host_name)
                     val hostAddress = alertDialog.findViewById<EditText>(R.id.host_address)
                     val hostPort = alertDialog.findViewById<EditText>(R.id.host_port)
                         mEditHostDialogListener?.onEditHostDialogDone(
                                 viewIdEditHost,
+                                keyEditHostName,
                                 keyEditHost,
+                                hostName.text.toString(),
                                 hostAddress.text.toString(),
                                 hostPort.text.toString())
                 }

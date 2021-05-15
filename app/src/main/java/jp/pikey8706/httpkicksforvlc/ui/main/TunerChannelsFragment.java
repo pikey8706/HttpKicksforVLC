@@ -44,6 +44,7 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
     private RadioGroup mRadioGroup;
     private RadioButton mRadioButton;
     private String mKeySelectedHost;
+    private String[] mHostNameKeys;
     private String[] mHostKeys;
 
     private ListView mListViewChannels;
@@ -80,6 +81,7 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
         Constants.Companion.init();
 
         mKeySelectedHost = (index == 1) ? Constants.KEY_SELECTED_HOST_TS : Constants.KEY_SELECTED_HOST_BS;
+        mHostNameKeys = (index == 1) ? Constants.KEY_HOST_NAMES_TS : Constants.KEY_HOST_NAMES_BS;
         mHostKeys = (index == 1) ? Constants.KEY_HOSTS_TS : Constants.KEY_HOSTS_BS;
 
         mKeyChannels = (index == 1) ? Constants.KEY_CHANNELS_TS : Constants.KEY_CHANNELS_BS;
@@ -140,8 +142,10 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
         });
         for (int index = 0; index < mRadioGroup.getChildCount(); index++) {
             RadioButton oneRadioButton = (RadioButton) mRadioGroup.getChildAt(index);
+            String hostNameKey = mHostNameKeys[index];
             String hostKey = mHostKeys[index];
-            oneRadioButton.setTag(hostKey);
+            oneRadioButton.setTag(R.id.view_id_host_name, hostNameKey);
+            oneRadioButton.setTag(R.id.view_id_host_address, hostKey);
             String hostPortAddress = Utility.loadPref(hostKey,
                     getString(R.string.protocol_http), mSharedPreference);
             oneRadioButton.setText(hostPortAddress);
@@ -238,7 +242,8 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
         Log.v(TAG, "onLongClick id: " + viewId);
         EditHostDialogFragment editHostDialogFragment = new EditHostDialogFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.KEY_EDIT_HOST, (String) view.getTag());
+        bundle.putString(Constants.KEY_EDIT_HOST_NAME, (String) view.getTag(R.id.view_id_host_name));
+        bundle.putString(Constants.KEY_EDIT_HOST, (String) view.getTag(R.id.view_id_host_address));
         bundle.putInt(Constants.KEY_EDIT_HOST_VIEW_ID, viewId);
         editHostDialogFragment.setArguments(bundle);
         editHostDialogFragment.show(getChildFragmentManager(), "editHost");
@@ -246,9 +251,10 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
     }
 
     @Override
-    public void onEditHostDialogDone(int viewId, String keyHost, String host, String port) {
+    public void onEditHostDialogDone(int viewId, String keyHostName, String keyHost, String hostName, String host, String port) {
         String hostPortAddress = Utility.getHttpHostAddress(host, port);
-        Log.v(TAG, "onEditHostDialogDone hostPortAddress: " + hostPortAddress);
+        Log.v(TAG, "onEditHostDialogDone hostName: " + hostName + " hostPortAddress: " + hostPortAddress);
+        Utility.savePref(keyHostName, hostName, mSharedPreference);
         Utility.savePref(keyHost, hostPortAddress, mSharedPreference);
 
         RadioButton radioButton = getView().findViewById(viewId);
