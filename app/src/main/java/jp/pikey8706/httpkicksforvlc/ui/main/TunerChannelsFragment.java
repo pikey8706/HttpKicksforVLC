@@ -78,7 +78,6 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
         if (getArguments() != null) {
             index = getArguments().getInt(ARG_SECTION_NUMBER);
         }
-        Constants.Companion.init();
 
         mKeySelectedHost = (index == 1) ? Constants.KEY_SELECTED_HOST_TS : Constants.KEY_SELECTED_HOST_BS;
         mHostNameKeys = (index == 1) ? Constants.KEY_HOST_NAMES_TS : Constants.KEY_HOST_NAMES_BS;

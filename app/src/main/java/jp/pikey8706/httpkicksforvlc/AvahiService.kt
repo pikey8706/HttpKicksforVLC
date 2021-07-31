@@ -27,6 +27,11 @@ class AvahiService : Service() {
     private val mLockForDiscoverService = ReentrantLock()
     private val mLockConditionForDiscoverService = mLockForDiscoverService.newCondition()
     private var isDiscoveryStarted = false
+    var mDnsResolvedListener : OnDnsResolvedListener? = null
+
+    interface OnDnsResolvedListener {
+        fun onDnsResolved()
+    }
 
     inner class AvahiServiceBinder : Binder() {
         val service: AvahiService
@@ -149,6 +154,7 @@ class AvahiService : Service() {
                 mNsdManager!!.resolveService(serviceInfo, mResolveListener)
                 waitFor(TIME_TO_RESOLVE_SERVICES)
             }
+            mDnsResolvedListener?.onDnsResolved();
         }).start()
     }
 
@@ -238,6 +244,18 @@ class AvahiService : Service() {
         mLockForDiscoverService.withLock {
             mLockConditionForDiscoverService.signal()
         }
+    }
+
+    fun resolveServiceAddress(hostName: String): String? {
+        Log.v(TAG, "resolveServiceAddress: $hostName")
+        var hostAddress: String? = null
+        for (serviceInfo in mResolvedServiceInfoList) {
+            Log.v(TAG, "serviceName:: " + serviceInfo.serviceName)
+            if (hostName.equals(serviceInfo.serviceName, true)) {
+                hostAddress = serviceInfo.host.hostAddress
+            }
+        }
+        return hostAddress
     }
 
     companion object {
