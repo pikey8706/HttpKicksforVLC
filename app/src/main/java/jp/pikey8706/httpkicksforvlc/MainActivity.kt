@@ -99,7 +99,7 @@ open class MainActivity : AppCompatActivity(), AvahiService.OnDnsResolvedListene
         var sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
         var index = 0
         val hostNameKeys: Array<String> = (Constants.KEY_HOST_NAMES_TS + Constants.KEY_HOST_NAMES_BS)
-        val hostKeys: Array<String> = (Constants.KEY_HOSTS_TS + Constants.KEY_HOSTS_TS)
+        val hostKeys: Array<String> = (Constants.KEY_HOSTS_TS + Constants.KEY_HOSTS_BS)
         for (hostNameKey:String in hostNameKeys) {
             Log.v(TAG, "resolve: $hostNameKey")
             var hostName: String? = Utility.loadPref(hostNameKey, null, sharedPrefs)
@@ -110,7 +110,7 @@ open class MainActivity : AppCompatActivity(), AvahiService.OnDnsResolvedListene
                 var port = Utility.getPortPart(hostPortAddress)
                 if (address != null) {
                     hostPortAddress = Utility.getHttpHostAddress(address, port)
-                    Log.v(TAG, "onDnsResolved key: $hostKey savePref: $hostPortAddress")
+                    Log.v(TAG, "onDnsResolved key: $hostKey savePref: $hostPortAddress index: $index")
                     Utility.savePref(hostKey, hostPortAddress, sharedPrefs)
                 }
             }

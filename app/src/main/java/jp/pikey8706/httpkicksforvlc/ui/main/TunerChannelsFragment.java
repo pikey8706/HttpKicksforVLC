@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -216,8 +217,9 @@ public class TunerChannelsFragment extends Fragment implements AdapterView.OnIte
         String channelUrl = baseUrl + "/" + channelId;
 
         String msg = "onItemClick channel name: " + channelName + " id: " + channelId
-                + " baseUrl: " + baseUrl;
+                + " channelUrl: " + channelUrl;
         Log.v(TAG, msg);
+        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
 
         Utility.startMPEGHttpForVlc(getContext(), channelUrl);
     }
