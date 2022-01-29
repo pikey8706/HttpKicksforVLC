@@ -17,6 +17,7 @@ import com.google.android.material.tabs.TabLayout
 import jp.pikey8706.httpkicksforvlc.AvahiService.AvahiServiceBinder
 import jp.pikey8706.httpkicksforvlc.kicks.Constants
 import jp.pikey8706.httpkicksforvlc.kicks.Utility
+import jp.pikey8706.httpkicksforvlc.kicks.XHandler
 import jp.pikey8706.httpkicksforvlc.ui.main.TunerPagerAdapter
 import java.util.*
 
@@ -41,6 +42,9 @@ open class MainActivity : AppCompatActivity(), AvahiService.OnDnsResolvedListene
         setupAvahiService()
 
         Constants.init()
+
+        XHandler.instance?.onX();
+        XHandler.instance?.onY();
     }
 
     override fun onDestroy() {
