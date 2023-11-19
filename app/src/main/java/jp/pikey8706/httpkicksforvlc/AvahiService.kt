@@ -6,9 +6,11 @@ import android.net.nsd.NsdManager
 import android.net.nsd.NsdManager.DiscoveryListener
 import android.net.nsd.NsdServiceInfo
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import android.text.TextUtils
 import android.util.Log
+import java.net.Inet4Address
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
@@ -125,7 +127,7 @@ class AvahiService : Service() {
     private fun startDiscovery() {
         Thread(Runnable {
             setupServiceTypes()
-            if (mServiceTypes == null || mServiceTypes!!.size == 0) {
+            if (mServiceTypes == null || mServiceTypes!!.isEmpty()) {
                 Log.d(TAG, "Service type is not specified")
                 return@Runnable
             }
@@ -252,7 +254,16 @@ class AvahiService : Service() {
         for (serviceInfo in mResolvedServiceInfoList) {
             Log.v(TAG, "serviceName:: " + serviceInfo.serviceName)
             if (hostName.equals(serviceInfo.serviceName, true)) {
-                hostAddress = serviceInfo.host.hostAddress
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    for (hostAddressOne in serviceInfo.hostAddresses) {
+                        if (hostAddressOne is Inet4Address) {
+                            hostAddress = hostAddressOne.hostAddress
+                            break
+                        }
+                    }
+                } else {
+                    hostAddress = serviceInfo.host.hostAddress
+                }
             }
         }
         return hostAddress
